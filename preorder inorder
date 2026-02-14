@@ -1,0 +1,59 @@
+#include<iostream>
+#include<map>
+#include<queue>
+#include<vector>
+using namespace std;
+
+struct node{
+    int data;
+    node* left;
+    node* right;
+
+    node(int val){
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+int preindex = 0;
+
+node* buildtree(vector<int>& inorder, vector<int>& preorder, int instart, int inend, unordered_map<int,int>& mp){
+    if(instart > inend) return nullptr;
+
+    int rootval = preorder[preindex++];
+    node* root = new node(rootval);
+
+    int inindex = mp[rootval];
+
+    root->left = buildtree(inorder, preorder, instart, inindex-1, mp);
+    root->right = buildtree(inorder, preorder, inindex+1, inend, mp);
+
+    return root;
+}
+
+void printInorder(node* root){
+    if(root == nullptr)
+        return;
+
+    printInorder(root->left);
+    cout << root->data << " ";
+    printInorder(root->right);
+}
+
+int main(){
+
+    vector<int> preorder = {3, 9, 20, 15, 7};
+    vector<int> inorder  = {9, 3, 15, 20, 7};
+
+    unordered_map<int,int> mp;
+
+    for(int i = 0; i < inorder.size(); i++)
+        mp[inorder[i]] = i;
+
+    node* root = buildtree(inorder, preorder, 0, inorder.size()-1, mp);
+
+    cout << "Inorder of constructed tree: ";
+    printInorder(root);
+
+    return 0;
+}
