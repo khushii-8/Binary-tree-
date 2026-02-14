@@ -1,0 +1,73 @@
+#include<iostream>
+using namespace std;
+
+struct node{
+    int data;
+    node* left;
+    node* right;
+
+    node(int val){
+        data = val;
+        left = right = NULL;
+    }
+};
+
+// Insert function
+node* insert(node* root, int val){
+    if(root == NULL)
+        return new node(val);
+
+    if(val < root->data)
+        root->left = insert(root->left, val);
+    else
+        root->right = insert(root->right, val);
+
+    return root;
+}
+
+// Floor in BST
+int findFloor(node* root, int key){
+
+    int floor = -1;
+
+    while(root != NULL){
+
+        if(root->data == key)
+            return root->data;
+
+        if(root->data > key){
+            root = root->left;
+        }
+        else{
+            floor = root->data;   // possible answer
+            root = root->right;
+        }
+    }
+
+    return floor;
+}
+
+int main(){
+
+    node* root = NULL;
+
+    // Build BST
+    root = insert(root, 8);
+    insert(root, 4);
+    insert(root, 12);
+    insert(root, 2);
+    insert(root, 6);
+    insert(root, 10);
+    insert(root, 14);
+
+    int key = 5;
+
+    int ans = findFloor(root, key);
+
+    if(ans != -1)
+        cout << "Floor of " << key << " is: " << ans;
+    else
+        cout << "No Floor found";
+
+    return 0;
+}
