@@ -1,0 +1,85 @@
+#include<iostream>
+using namespace std;
+
+struct node{
+    int data;
+    node* next;
+    node* bottom;
+
+    node(int val){
+        data = val;
+        next = NULL;
+        bottom = NULL;
+    }
+};
+
+// Merge two sorted bottom lists
+node* mergelist(node* a, node* b){
+    if(a == NULL) return b;
+    if(b == NULL) return a;
+
+    node* result = NULL;
+
+    if(a->data < b->data){
+        result = a;
+        result->bottom = mergelist(a->bottom, b);
+    }
+    else{
+        result = b;
+        result->bottom = mergelist(a, b->bottom);
+    }
+
+    result->next = NULL;   // Important
+    return result;
+}
+
+// Flatten function
+node* flatten(node* root){
+    if(root == NULL || root->next == NULL)
+        return root;
+
+    root->next = flatten(root->next);
+
+    root = mergelist(root, root->next);
+
+    return root;
+}
+
+// Print bottom list
+void printList(node* head){
+    while(head != NULL){
+        cout << head->data << " ";
+        head = head->bottom;
+    }
+}
+
+int main(){
+
+    // Creating the list manually
+
+    node* head = new node(5);
+    head->next = new node(10);
+    head->next->next = new node(19);
+    head->next->next->next = new node(28);
+
+    head->bottom = new node(7);
+    head->bottom->bottom = new node(8);
+    head->bottom->bottom->bottom = new node(30);
+
+    head->next->bottom = new node(20);
+
+    head->next->next->bottom = new node(22);
+    head->next->next->bottom->bottom = new node(50);
+
+    head->next->next->next->bottom = new node(35);
+    head->next->next->next->bottom->bottom = new node(40);
+    head->next->next->next->bottom->bottom->bottom = new node(45);
+
+    // Flatten
+    node* flatHead = flatten(head);
+
+    cout << "Flattened List: ";
+    printList(flatHead);
+
+    return 0;
+}
