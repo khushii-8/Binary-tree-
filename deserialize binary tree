@@ -1,0 +1,87 @@
+#include<iostream>
+#include<queue>
+#include<sstream>
+using namespace std;
+
+struct node{
+    int data;
+    node* left;
+    node* right;
+
+    node(int val){
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+node* deserialize(string data){
+    if(data == "") return NULL;
+
+    stringstream ss(data);
+    string token;
+
+    getline(ss, token, ',');
+    node* root = new node(stoi(token));
+
+    queue<node*> q;
+    q.push(root);
+
+    while(!q.empty()){
+        node* curr = q.front();
+        q.pop();
+
+        // Left child
+        if(getline(ss, token, ',')){
+            if(token != "#"){
+                node* leftNode = new node(stoi(token));
+                curr->left = leftNode;
+                q.push(leftNode);
+            }
+        }
+
+        // Right child
+        if(getline(ss, token, ',')){
+            if(token != "#"){
+                node* rightNode = new node(stoi(token));
+                curr->right = rightNode;
+                q.push(rightNode);
+            }
+        }
+    }
+
+    return root;
+}
+
+// Helper function to print tree
+void printLevelOrder(node* root){
+    if(root == NULL) return;
+
+    queue<node*> q;
+    q.push(root);
+
+    while(!q.empty()){
+        node* curr = q.front();
+        q.pop();
+
+        if(curr == NULL){
+            cout << "# ";
+        }
+        else{
+            cout << curr->data << " ";
+            q.push(curr->left);
+            q.push(curr->right);
+        }
+    }
+}
+
+int main(){
+
+    string data = "1,2,3,#,#,4,5,#,#,#,#,";
+
+    node* root = deserialize(data);
+
+    cout << "Tree after deserialization: ";
+    printLevelOrder(root);
+
+    return 0;
+}
